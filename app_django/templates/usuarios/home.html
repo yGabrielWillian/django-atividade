@@ -1,0 +1,32 @@
+<!-- app_usuario/templates/registration/login.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/usuario.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>DIGITE SEUS DADOS</h1>
+        <form action="{% url 'listagem_usuarios' %}" method="post">
+            {% csrf_token %}
+            <label for="username">NOME:</label>
+            <input type="text" name="nome" id="password" required>
+            <label for="text">IDADE:</label>
+            <input type="text" name="idade" id="password" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

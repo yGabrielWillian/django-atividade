@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Profissional</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #444;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button.add {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button.logout {
+            background-color: #007BFF;
+            color: white;
+            float: right;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table thead {
+            background-color: #007BFF;
+            color: white;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        button.edit {
+            background-color: #FFC107;
+            color: white;
+        }
+        button.delete {
+            background-color: #DC3545;
+            color: white;
+        }
+        .urgency-low {
+            background-color: #DFFFD6;
+        }
+        .urgency-medium {
+            background-color: #FFFDD6;
+        }
+        .urgency-high {
+            background-color: #FFD6D6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="logout" onclick="logout()">Logout</button>
+        <h2>CRUD Profissional</h2>
+
+        <div class="input-group">
+            <input type="text" id="item" placeholder="Digite um item" />
+            <select id="urgency">
+                <option value="low">Baixa Urgência</option>
+                <option value="medium">Média Urgência</option>
+                <option value="high">Alta Urgência</option>
+            </select>
+            <button class="add" onclick="addItem()">Adicionar</button>
+        </div>
+
+        <table id="itemsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Urgência</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os itens serão adicionados aqui -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let items = [];
+        let editingIndex = -1;
+
+        // Função para adicionar ou atualizar um item
+        function addItem() {
+            const input = document.getElementById('item');
+            const urgencySelect = document.getElementById('urgency');
+            const itemText = input.value.trim();
+            const urgency = urgencySelect.value;
+
+            if (itemText === '') {
+                alert('Por favor, insira um item!');
+                return;
+            }
+
+            if (editingIndex === -1) {
+                // Adicionar novo item
+                items.push({ id: items.length + 1, text: itemText, urgency });
+            } else {
+                // Atualizar item
+                items[editingIndex].text = itemText;
+                items[editingIndex].urgency = urgency;
+                editingIndex = -1;
+            }
+
+            input.value = '';
+            urgencySelect.value = 'low';
+            renderTable();
+        }
+
+        // Função para renderizar a tabela
+        function renderTable() {
+            const tableBody = document.querySelector('#itemsTable tbody');
+            tableBody.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = `urgency-${item.urgency}`;
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.text}</td>
+                    <td>${item.urgency === 'low' ? 'Baixa' : item.urgency === 'medium' ? 'Média' : 'Alta'}</td>
+                    <td>
+                        <button class="edit" onclick="editItem(${index})">Editar</button>
+                        <button class="delete" onclick="deleteItem(${index})">Excluir</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Função para editar um item
+        function editItem(index) {
+            const item = items[index];
+            document.getElementById('item').value = item.text;
+            document.getElementById('urgency').value = item.urgency;
+            editingIndex = index;
+        }
+
+        // Função para excluir um item
+        function deleteItem(index) {
+            if (confirm('Tem certeza que deseja excluir este item?')) {
+                items.splice(index, 1);
+                renderTable();
+            }
+        }
+
+        // Função de logout
+        function logout() {
+            window.location.href = 'http://127.0.0.1:8000/'; // Redireciona para a página de login
+        }
+    </script>
+</body>
+</html>
